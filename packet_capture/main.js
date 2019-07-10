@@ -2,7 +2,6 @@ let pcap = require('pcap')
 
 //MACアドレスを他ファイルからimport
 const macAddr = require('./macAddr.js')
-console.log(macAddr.mac())
 
 let tcp_tracker = new pcap.TCPTracker()
 let pcap_session = pcap.createSession('wlan0', "arp")
@@ -26,7 +25,6 @@ function compareArray(arr) {
 pcap_session.on('packet', function (raw_packet) {
   let packet = pcap.decode.packet(raw_packet);
   let sourceMacAddr = packet["payload"]["shost"]["addr"]
-  console.log(sourceMacAddr)
 
   // TargetのMACアドレスと一致した時
   if (compareArray(sourceMacAddr)) {

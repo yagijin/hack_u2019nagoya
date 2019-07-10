@@ -1,10 +1,14 @@
 let pcap = require('pcap')
 
+//MACアドレスを他ファイルからimport
+const macAddr = require('./macAddr.js')
+console.log(macAddr.mac())
+
 let tcp_tracker = new pcap.TCPTracker()
-let pcap_session = pcap.createSession('en0', "arp");
+let pcap_session = pcap.createSession('wlan0', "arp")
 
 // ここにターゲットにするデバイスのMACアドレス
-// const TARGET = 
+const TARGET = macAddr.mac();
 
 /**
  * 配列の内容が同一であるかの判定を行う
@@ -21,12 +25,13 @@ function compareArray(arr) {
 
 pcap_session.on('packet', function (raw_packet) {
   let packet = pcap.decode.packet(raw_packet);
-  let macAddr = packet["payload"]["shost"]["addr"]
+  let sourceMacAddr = packet["payload"]["shost"]["addr"]
+  console.log(sourceMacAddr)
 
   // TargetのMACアドレスと一致した時
-  if (compareArray(macAddr)) {
-    console.log("これは完全にやぎじん")
+  if (compareArray(sourceMacAddr)) {
+    console.log("これはお母さんです")
   }
-});
+})
 
  

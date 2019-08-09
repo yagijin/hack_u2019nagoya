@@ -11,3 +11,14 @@ module.exports = {
     'mac': mac
 } 
 ```
+
+## ターゲットにするMACアドレスの変更方法
+ターゲットにするMACアドレスの変更は，HTTP APIサーバを通じて行う．
+
+`main.js`を実行することでAPIサーバが起動し，`/`の`8080`に以下のJSONでPOSTリクエストを送ることで変更することができる．
+
+```js
+{
+  'macAddr'[xx,xx,xx,xx,xx,xx]
+}
+```

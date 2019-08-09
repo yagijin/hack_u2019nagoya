@@ -7,8 +7,7 @@ const PORT = 8080
 
 
 let tcp_tracker = new pcap.TCPTracker()
-//let pcap_session = pcap.createSession('wlan0', "arp")
-let pcap_session = pcap.createSession('en0','arp')
+let pcap_session = pcap.createSession('wlan0', "arp")
 let server = http.createServer()
 
 // ここにターゲットにするデバイスのMACアドレス

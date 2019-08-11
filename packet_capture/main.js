@@ -1,14 +1,25 @@
 let pcap = require('pcap')
-let http = require('http')
+let express = require('express')
 
 //MACアドレスを他ファイルからimport
 const MACADDR = require('./macAddr.js')
+
+
 const PORT = 8080
+const NET_INTERFACE = 'wlan0'
 
-
+// Packet Caputure
 let tcp_tracker = new pcap.TCPTracker()
-let pcap_session = pcap.createSession('wlan0', "arp")
-let server = http.createServer()
+let pcap_session = pcap.createSession(NET_INTERFACE, "arp")
+
+// HTTP Server
+let app = express()
+app.listen(PORT)
+
+app.use(express.urlencoded({
+  extended: true
+}))
+app.use(express.json())
 
 // ここにターゲットにするデバイスのMACアドレス
 let targetMacAddr = MACADDR.mac();
@@ -36,35 +47,22 @@ pcap_session.on('packet', function (raw_packet) {
   }
 })
 
-console.log('HTTP Server Start')
-console.log("Listen ",PORT)
-server.on('request',setMacAddr)
-server.listen(PORT)
+app.post('/set_mac_address',function(req,res) {
+  let reqMacAddr = req.body.macAddr
 
-// MacAddrの変更を行う
-function setMacAddr(req,res) {
-  
-  // POST以外の場合　エラーメッセージを送信
-  if(req.method != 'POST') {
-    errRsp = JSON.stringify({
-      "type" : "Method Error",
-      "message" : "Only post request"
+  if (reqMacAddr === undefined) {
+    res.json({
+      'type':'Failed',
+      'message':"Unexcepted Error"
     })
-    res.write(errRsp)
-    res.end()
-    return
+  } else {
+    console.log('Target MAC address is Changed!')
+    console.log(targetMacAddr," -> ",reqMacAddr)
+    targetMacAddr = reqMacAddr
+    res.json({
+      'type':'Success',
+      'message': 'Target MACAddress is Changed!'
+    })
   }
+})
 
-  // 監視対象のMACアドレスの変更
-  req.on('data',(chunk) => {
-    let reqData = JSON.parse(chunk)
-    targetMacAddr = reqData['macAddr']
-    let successRsp = JSON.stringify({
-      "type" : "Success",
-      "message" : "Target MACAddress Changed!"
-    })
-    res.write(successRsp)
-    res.end()
-  })
-}
- 

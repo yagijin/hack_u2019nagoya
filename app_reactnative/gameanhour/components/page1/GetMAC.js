@@ -1,12 +1,9 @@
-
 import React, { Component } from 'react';
 import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem } from 'native-base';
 import { AppLoading } from 'expo';
-//import { MACAddrList } from './AddrList.js';
 import { RefreshList } from './Refresh.js';
 
 export class GetMACAddr extends Component {
-    //コンストラクタ
     constructor(props){
         super(props); 
         this.state = {
@@ -17,7 +14,7 @@ export class GetMACAddr extends Component {
 
   async componentWillMount() {
     //MACアドレスの一覧をサーバに要求
-    console.log("これからりくえすとするよ")
+    console.log("これからリクエストを開始")
     try {
         let resp = await fetch('http://192.168.11.18:8080/get_mac_list',{
             method:"GET"

@@ -13,6 +13,7 @@ export class RefreshList extends Component {
     };
     this.token;
   }
+  
   async setMacAddr(item) {
     //MACアドレスの一覧をサーバに要求
     console.log(item)

@@ -1,6 +1,8 @@
 let pcap = require('pcap')
 let express = require('express')
 
+let util = require('./util.js')
+
 //MACアドレスを他ファイルからimport
 const MACADDR = require('./macAddr.js')
 
@@ -37,27 +39,6 @@ function compareArray(arr) {
   return true
 }
 
-/**
- * ランダムにMACアドレスのリストを返す関数
- */
-function createRandomMacAddrList() {
-  let macAddrs = []
-  for (let i = 0;i < 10;i++) {
-    let tmp = ''
-    for (let j = 0;j < 5;j++) {
-      tmp += Math.floor(Math.random() * 99) + ':'
-    }
-    tmp += Math.floor(Math.random() * 99) 
-    macAddrs.push(tmp)
-  }
-  return macAddrs
-}
-
-async function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve,ms))
-
-}
-
 pcap_session.on('packet', function (raw_packet) {
   let packet = pcap.decode.packet(raw_packet);
   let sourceMacAddr = packet["payload"]["shost"]["addr"]
@@ -89,9 +70,9 @@ app.post('/set_mac_address',function(req,res) {
 
 app.get('/get_mac_list',function(req,res){
   (async () => {
-    await sleep(1000)
+    await util.sleep(1000)
     res.json({
-      'macAddrs':createRandomMacAddrList()
+      'macAddrs':util.createMacAddrList()
     })
   })()
 })

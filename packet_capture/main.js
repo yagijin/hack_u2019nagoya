@@ -1,5 +1,6 @@
 let pcap = require('pcap')
 let express = require('express')
+let { Expo } = require('expo-server-sdk')
 
 let util = require('./util.js')
 
@@ -9,6 +10,8 @@ const MACADDR = require('./macAddr.js')
 
 const PORT = 8080
 const NET_INTERFACE = 'en0'
+
+let expo = new Expo()
 
 // Packet Caputure
 let tcp_tracker = new pcap.TCPTracker()
@@ -25,6 +28,9 @@ app.use(express.json())
 
 // ここにターゲットにするデバイスのMACアドレス
 let targetMacAddr = MACADDR.mac();
+
+let deviceToken = 'Default'
+let startFlag = false
 
 /**
  * 配列の内容が同一であるかの判定を行う
@@ -44,27 +50,9 @@ pcap_session.on('packet', function (raw_packet) {
   let sourceMacAddr = packet["payload"]["shost"]["addr"]
 
   // TargetのMACアドレスと一致した時
-  if (compareArray(sourceMacAddr)) {
-    console.log("これはお母さんです")
-  }
-})
-
-app.post('/set_mac_address',function(req,res) {
-  let reqMacAddr = req.body.macAddr
-
-  if (reqMacAddr === undefined) {
-    res.json({
-      'type':'Failed',
-      'message':"Unexcepted Error"
-    })
-  } else {
-    console.log('Target MAC address is Changed!')
-    console.log(targetMacAddr," -> ",reqMacAddr)
-    targetMacAddr = reqMacAddr
-    res.json({
-      'type':'Success',
-      'message': 'Target MACAddress is Changed!'
-    })
+  if (startFlag && compareArray(sourceMacAddr)) {
+    util.notify(deviceToken)
+    startFlag = false
   }
 })
 
@@ -76,3 +64,31 @@ app.get('/get_mac_list',function(req,res){
     })
   })()
 })
+
+app.post('/monitor', function(req,res){
+  console.log(req.body)
+  if(req.body.token === undefined || req.body.macAddr === undefined) {
+    res.json({
+      'message':'Format error'
+    })
+    res.end()
+    return
+  }
+
+  let token = req.body.token
+  let macAddr = util.hex2dex(req.body.macAddr)
+
+  console.log('Target MAC address is Changed!')
+  console.log(targetMacAddr," -> ",macAddr)
+  console.log('Device Token is Changed!')
+  console.log(deviceToken,' -> ',token)
+  console.log()
+
+  deviceToken = token
+  targetMacAddr = macAddr
+
+  startFlag = true
+
+  res.end()
+})
+

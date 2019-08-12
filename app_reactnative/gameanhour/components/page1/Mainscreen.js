@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem } from 'native-base';
-import  { MACAddrList } from './AddrList.js';
 
 export class Mainscreen extends Component {
     //コンストラクタ
@@ -12,14 +11,14 @@ export class Mainscreen extends Component {
         <Container>
           <Header>
             <Body>
-              <Title>MACアドレスの選択</Title>
+              <Title>ゲームは1日1時間</Title>
             </Body>
           </Header>
           <Content>
             <Text>
-              Select Any MAC Address You Wanna Follow.
+              以下のREFRESHを押すとローカルネットワーク内のMACアドレス一覧が取得できます．
+              お好みのMACアドレスをタップして通知を受信する設定をしてください．
             </Text>
-            <MACAddrList />
           </Content>
           <Footer>
             <FooterTab>

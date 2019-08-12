@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem } from 'native-base';
 import { AppLoading } from 'expo';
@@ -53,5 +54,4 @@ export class GetMACAddr extends Component {
     );
   }
 }
-
 

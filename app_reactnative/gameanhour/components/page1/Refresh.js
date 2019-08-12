@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { FlatList } from "react-native";
 import { Text, ListItem, Left, Body, Icon, Right, Title ,Button } from "native-base";
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
 
 export class RefreshList extends Component {
   constructor(props) {
@@ -9,17 +11,21 @@ export class RefreshList extends Component {
       data: this.props.macAddrs,
       stickyHeaderIndices: []
     };
+    this.token;
   }
   async setMacAddr(item) {
     //MACアドレスの一覧をサーバに要求
     console.log(item)
+    console.log(this.token)
     try {
-      let resp = await fetch('http://192.168.11.18:8080/set_mac_address',{
+      let resp = await fetch('http://192.168.11.18:8080/monitor',{
           method:"POST",
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"macAddr": item})
+          body: JSON.stringify({
+            "macAddr": item,
+            "token": this.token})
       })
       //MACアドレスの一覧を受信
       let responseJson = await resp.json()
@@ -30,8 +36,10 @@ export class RefreshList extends Component {
     }
   
   }
-  
-  componentWillMount() {
+
+  async componentWillMount() {
+
+    this.token = await registerForPushNotificationsAsync();
     var arr = [];
     
     this.setState({
@@ -58,4 +66,36 @@ export class RefreshList extends Component {
       />
     );
   }
+}
+
+
+//プッシュ通知のための関数
+async function registerForPushNotificationsAsync() {
+  const { status: existingStatus } = await Permissions.getAsync(
+    Permissions.NOTIFICATIONS
+  );
+  let finalStatus = existingStatus;
+
+  // only ask if permissions have not already been determined, because
+  // iOS won't necessarily prompt the user a second time.
+  if (existingStatus !== 'granted') {
+    // Android remote notification permissions are granted during the app
+    // install, so this will only ask on iOS
+    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    finalStatus = status;
+  }
+
+  // Stop here if the user did not grant permissions
+  if (finalStatus !== 'granted') {
+    return;
+  }
+
+  Notifications.createChannelAndroidAsync('closing-message', {
+    name: 'Chat message',
+    sound: true,
+  });
+
+  // Get the token that uniquely identifies this device
+  let token = await Notifications.getExpoPushTokenAsync();
+  return token;
 }

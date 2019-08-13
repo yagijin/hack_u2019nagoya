@@ -31,6 +31,7 @@ let targetMacAddr = MACADDR.mac();
 
 let deviceToken = 'Default'
 let startFlag = false
+let notifyType = 'Default'
 
 /**
  * 配列の内容が同一であるかの判定を行う
@@ -51,7 +52,12 @@ pcap_session.on('packet', function (raw_packet) {
 
   // TargetのMACアドレスと一致した時
   if (startFlag && compareArray(sourceMacAddr)) {
-    util.notify(deviceToken,'Your mother is approaching!')
+    if (notifyType == 'android' || notifyType == 'both' ) {
+      util.notify(deviceToken,'Your mother is approaching!')
+    }
+    if (notifyType == 'ghome' || notifyType == 'both' ) {
+      // ここにGoogle Homeの通知処理
+    } 
     startFlag = false
   }
 })
@@ -67,7 +73,7 @@ app.get('/get_mac_list',function(req,res){
 
 app.post('/monitor', function(req,res){
   console.log(req.body)
-  if(req.body.token === undefined || req.body.macAddr === undefined) {
+  if(req.body.token === undefined || req.body.macAddr === undefined || req.body.notifyType === undefined ) {
     res.json({
       'message':'Format error'
     })
@@ -77,15 +83,19 @@ app.post('/monitor', function(req,res){
 
   let token = req.body.token
   let macAddr = util.hex2dex(req.body.macAddr)
+  let type = req.body.notifyType
 
   console.log('Target MAC address is Changed!')
   console.log(targetMacAddr," -> ",macAddr)
   console.log('Device Token is Changed!')
   console.log(deviceToken,' -> ',token)
+  console.log('Notify Type is Changed!')
+  console.log(notifyType,' -> ',type)
   console.log()
 
   deviceToken = token
   targetMacAddr = macAddr
+  notifyType = type
 
   startFlag = true
 

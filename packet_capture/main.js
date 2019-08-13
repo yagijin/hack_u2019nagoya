@@ -9,7 +9,7 @@ const MACADDR = require('./macAddr.js')
 
 
 const PORT = 8080
-const NET_INTERFACE = 'en0'
+const NET_INTERFACE = 'wlan0'
 
 let expo = new Expo()
 
@@ -51,7 +51,7 @@ pcap_session.on('packet', function (raw_packet) {
 
   // TargetのMACアドレスと一致した時
   if (startFlag && compareArray(sourceMacAddr)) {
-    util.notify(deviceToken)
+    util.notify(deviceToken,'Your mother is approaching!')
     startFlag = false
   }
 })

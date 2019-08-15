@@ -45,9 +45,6 @@ export class GetMACAddr extends Component {
             </Body>
           </Header>
           <Content>
-            <Text>
-              Push Refresh Button and Select Any MAC Address You Wanna Follow.
-            </Text>
             <RefreshList macAddrs={this.state.str} isReady={this.state.isReady} />
           </Content>
           <Footer>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, ToastAndroid } from "react-native";
-import { Text, ListItem, Left, Body, Icon, Right, Title ,Button,Spinner } from "native-base";
+import { Text, ListItem, Left, Body, Icon, Right, Title, Button, Spinner, CheckBox, Content} from "native-base";
 import { registerForPushNotificationsAsync } from './GetTokenNotify.js';
 
 export class RefreshList extends Component {
@@ -8,6 +8,8 @@ export class RefreshList extends Component {
     super(props);
     this.state = {
       stickyHeaderIndices: [],
+      checkedAndroid: false,
+      checkedGoogleHome: false
     };
     this.token;
   }
@@ -24,7 +26,7 @@ export class RefreshList extends Component {
           body: JSON.stringify({
             "macAddr": item,
             "token": this.token,
-            "notifyType": "android",
+            "notifyType": (this.state.checkedAndroid && this.state.checkedGoogleHome)?"both":(this.state.checkedAndroid)?"android":"ghome"
           })
       })
       texttoast = "You Set " + item;
@@ -42,6 +44,19 @@ export class RefreshList extends Component {
         stickyHeaderIndices: arr
       });
   }
+
+  async checker1() {
+    this.setState({
+      checkedAndroid:!this.state.checkedAndroid
+    })
+  }
+
+  async checker2() {
+    this.setState({
+      checkedGoogleHome:!this.state.checkedGoogleHome
+    })
+  }
+
   _renderItem = ({item}) => (
     <ListItem style={{ marginLeft: 0 }} full onPress={_ => this.setMacAddr(item.macadd)}>
     <Body>
@@ -53,16 +68,68 @@ export class RefreshList extends Component {
     //完成したリストを返す
     if (this.props.isReady) {
       return (
+        <Content>
+            <ListItem>
+              <Body>
+                <Text>
+                  Notification Device 
+                </Text>
+              </Body>
+            </ListItem>
+            <ListItem>
+              <CheckBox onPress={_ => this.checker1()} checked={this.state.checkedAndroid} />
+              <Body>
+                <Text>This App</Text>
+              </Body>
+              <CheckBox onPress={_ => this.checker2()} checked={this.state.checkedGoogleHome} />
+              <Body>
+                <Text>Google Home</Text>
+              </Body>
+            </ListItem>
+            <ListItem>
+              <Body>
+                <Text>
+                  Push Refresh Button and Select Any MAC Address You Wanna Follow.
+                </Text>
+              </Body>
+        </ListItem>
         <FlatList
           data={this.props.macAddrs}
           renderItem={this._renderItem}
           keyExtractor={item => item.macadd}
           stickyHeaderIndices={this.state.stickyHeaderIndices}
         />
+        </Content>
       );
     }
     return (
-      <Spinner></Spinner>
+      <Content>
+            <ListItem>
+              <Body>
+                <Text>
+                  Notification Device 
+                </Text>
+              </Body>
+            </ListItem>
+            <ListItem>
+              <CheckBox onPress={_ => this.checker1()} checked={this.state.checkedAndroid} />
+              <Body>
+                <Text>This App</Text>
+              </Body>
+              <CheckBox onPress={_ => this.checker2()} checked={this.state.checkedGoogleHome} />
+              <Body>
+                <Text>Google Home</Text>
+              </Body>
+            </ListItem>
+            <ListItem>
+              <Body>
+                <Text>
+                  Push Refresh Button and Select Any MAC Address You Wanna Follow.
+                </Text>
+              </Body>
+        </ListItem>
+        <Spinner></Spinner>
+      </Content>
     )
   }
 }

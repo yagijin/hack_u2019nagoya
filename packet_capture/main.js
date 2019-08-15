@@ -1,31 +1,14 @@
-let pcap = require('pcap')
-let express = require('express')
-let { Expo } = require('expo-server-sdk')
+const pcap = require('pcap')
+const express = require('express')
 
-let util = require('./util.js')
-let arper = require('./arper.js')
+const util = require('./util.js')
+const arper = require('./arper.js')
 
 //MACアドレスを他ファイルからimport
 const MACADDR = require('./macAddr.js')
 
-
 const PORT = 8080
 const NET_INTERFACE = 'en0'
-
-let expo = new Expo()
-
-// Packet Caputure
-let tcp_tracker = new pcap.TCPTracker()
-let pcap_session = pcap.createSession(NET_INTERFACE, "arp")
-
-// HTTP Server
-let app = express()
-app.listen(PORT)
-
-app.use(express.urlencoded({
-  extended: true
-}))
-app.use(express.json())
 
 // ここにターゲットにするデバイスのMACアドレス
 let targetMacAddr = MACADDR.mac();
@@ -33,6 +16,20 @@ let targetMacAddr = MACADDR.mac();
 let deviceToken = 'Default'
 let startFlag = false
 let notifyType = 'Default'
+
+// Packet Caputure
+let pcapSession = pcap.createSession(NET_INTERFACE, "arp")
+
+// HTTP Server
+let app = express()
+
+
+app.listen(PORT)
+app.use(express.urlencoded({
+  extended: true
+}))
+app.use(express.json())
+
 
 /**
  * 配列の内容が同一であるかの判定を行う
@@ -47,7 +44,7 @@ function compareArray(arr) {
   return true
 }
 
-pcap_session.on('packet', function (raw_packet) {
+pcapSession.on('packet', function (raw_packet) {
   let packet = pcap.decode.packet(raw_packet);
   let sourceMacAddr = packet["payload"]["shost"]["addr"]
 
@@ -63,6 +60,7 @@ pcap_session.on('packet', function (raw_packet) {
   }
 })
 
+// MACアドレスの一覧を取得
 app.get('/get_mac_list',function(req,res){
   (async () => {
     let resultMacAddrs = await arper.calcMacAddrs()
@@ -73,6 +71,7 @@ app.get('/get_mac_list',function(req,res){
   })()
 })
 
+// 監視の開始
 app.post('/monitor', function(req,res){
   console.log(req.body)
   if(req.body.token === undefined || req.body.macAddr === undefined || req.body.notifyType === undefined ) {

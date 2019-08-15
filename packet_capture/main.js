@@ -3,13 +3,14 @@ let express = require('express')
 let { Expo } = require('expo-server-sdk')
 
 let util = require('./util.js')
+let arper = require('./arper.js')
 
 //MACアドレスを他ファイルからimport
 const MACADDR = require('./macAddr.js')
 
 
 const PORT = 8080
-const NET_INTERFACE = 'wlan0'
+const NET_INTERFACE = 'en0'
 
 let expo = new Expo()
 
@@ -64,9 +65,10 @@ pcap_session.on('packet', function (raw_packet) {
 
 app.get('/get_mac_list',function(req,res){
   (async () => {
-    await util.sleep(1000)
+    let resultMacAddrs = await arper.calcMacAddrs()
+
     res.json({
-      'macAddrs':util.createMacAddrList()
+      'macAddrs': resultMacAddrs
     })
   })()
 })

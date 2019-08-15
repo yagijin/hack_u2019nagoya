@@ -6,19 +6,23 @@ import { Ionicons } from '@expo/vector-icons';
 import { Mainscreen } from './components/page1/Mainscreen.js';
 import { GetMACAddr } from './components/page1/GetMAC.js';
 import * as Permissions from 'expo-permissions';
-import { createDrawerNavigator, createStackNavigator, createBottomTabNavigator, createAppContainer } from 'react-navigation';
+import { createMaterialTopTabNavigator ,createDrawerNavigator, createStackNavigator, createBottomTabNavigator, createAppContainer } from 'react-navigation';
 
-const AppNavigator = createStackNavigator(
+const TabNavigator = createMaterialTopTabNavigator(
   {
-    Home: Mainscreen,
-    Details: GetMACAddr
+    Home: {
+      screen: Mainscreen,
+    },
+    Details: {
+      screen: GetMACAddr,
+    },
   },
   {
     initialRouteName: "Home"
   }
 );
 
-const AppContainer = createAppContainer(AppNavigator);
+const AppContainer = createAppContainer(TabNavigator);
 
 export default class App extends React.Component {
   constructor(props) {

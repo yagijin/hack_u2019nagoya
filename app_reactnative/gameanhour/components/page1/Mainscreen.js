@@ -1,29 +1,77 @@
 import React, { Component } from 'react';
-import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem } from 'native-base';
+import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem, Form, Item, Input, CheckBox } from 'native-base';
+import { setMacAddr } from './Refreshbutton.js';
+import { registerForPushNotificationsAsync } from './GetTokenNotify.js';
 
 export class Mainscreen extends Component {
     //コンストラクタ
     constructor(props){
         super(props);
+        this.state = {
+          checkedAndroid: false,
+          checkedGoogleHome: false
+        };
+        (async ()=>{
+          let token = await registerForPushNotificationsAsync()
+          this.token = token
+        })()
     }
+
+    async checker1() {
+      this.setState({
+        checkedAndroid:!this.state.checkedAndroid
+      })
+    }
+
+    async checker2() {
+      this.setState({
+        checkedGoogleHome:!this.state.checkedGoogleHome
+      })
+    }
+
     render() {
       return (
         <Container>
           <Header>
             <Body>
-              <Title>ゲームは1日1時間</Title>
+              <Title>Limited An Hour Per A Day</Title>
             </Body>
           </Header>
           <Content>
-            <Text>
-              以下のREFRESHを押すとローカルネットワーク内のMACアドレス一覧が取得できます．
-              お好みのMACアドレスをタップして通知を受信する設定をしてください．
-            </Text>
+            <ListItem>
+              <Body>
+                <Text>
+                  Type Target MAC Address below. If You Don`t Know Target`s MAC Address, You Can Search It Using The Other Tab.  
+                </Text>
+              </Body>
+            </ListItem>
+            <ListItem>
+              <Body>
+                <Text>
+                  Notification Device 
+                </Text>
+              </Body>
+            </ListItem>
+            <ListItem>
+              <CheckBox onPress={_ => this.checker1()} checked={this.state.checkedAndroid} />
+              <Body>
+                <Text>This App</Text>
+              </Body>
+              <CheckBox onPress={_ => this.checker2()} checked={this.state.checkedGoogleHome} />
+              <Body>
+                <Text>Google Home</Text>
+              </Body>
+            </ListItem>
+            <ListItem>
+              <Form>
+                  <Input placeholder="Target MAC Address" />
+              </Form>
+            </ListItem>
           </Content>
           <Footer>
             <FooterTab>
-            <Button full onPress={_ => this.props.navigation.navigate('Details')}>
-                <Text>Refresh</Text>
+              <Button full onPress={_ => setMacAddr("MYMACADDRESS",this.token,(this.state.checkedAndroid && this.state.checkedGoogleHome)?"both":(this.state.checkedAndroid)?"android":"ghome")}>
+                <Text>Set Target to Notify</Text>
               </Button>
             </FooterTab>
           </Footer>

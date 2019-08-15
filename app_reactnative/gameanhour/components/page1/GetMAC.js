@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem } from 'native-base';
+import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem,Spinner } from 'native-base';
 import { AppLoading } from 'expo';
 import { RefreshList } from './Refresh.js';
 
@@ -8,31 +8,34 @@ export class GetMACAddr extends Component {
         super(props); 
         this.state = {
             isReady: false,
-            str: []
+            str: [],
+            lastUpdate:Date()
         };
     }
 
-  async componentWillMount() {
-    //MACアドレスの一覧をサーバに要求
-    console.log("これからリクエストを開始")
-    try {
-        let resp = await fetch('http://192.168.11.18:8080/get_mac_list',{
-            method:"GET"
-        })
-        //MACアドレスの一覧を受信
-        let responseJson = await resp.json()
-        this.str = responseJson["macAddrs"]
-        console.log(this.str)
-    } catch(e) {
-        console.log(e)
+    async componentWillMount() {
+      //MACアドレスの一覧をサーバに要求
+      this.setState({ isReady: true });
     }
-    this.setState({ isReady: true });
-  }
 
+  async test(){
+    this.setState({
+      isReady : false
+    })
+
+    let resp = await fetch('http://192.168.11.36:8080/get_mac_list',{
+        method:"GET"
+    })
+    let respJSON = await resp.json()
+
+    //MACアドレスの一覧を受信
+    this.setState({
+      str:respJSON.macAddrs,
+      lastUpdate:Date(),
+      isReady:true
+    })
+  }
   render() {
-    if (!this.state.isReady) {
-        return <AppLoading />;
-    }
     //受け取ったMACアドレスの一覧をリストにして分割して表示
     return (
         <Container>
@@ -43,10 +46,17 @@ export class GetMACAddr extends Component {
           </Header>
           <Content>
             <Text>
-              Select Any MAC Address You Wanna Follow.
+              Push Refresh Button and Select Any MAC Address You Wanna Follow.
             </Text>
-            <RefreshList macAddrs={this.str} />
+            <RefreshList macAddrs={this.state.str} isReady={this.state.isReady} />
           </Content>
+          <Footer>
+            <FooterTab>
+            <Button full onPress={_ => this.test()}>
+                <Text>Refresh</Text>
+              </Button>
+            </FooterTab>
+          </Footer>
         </Container>
     );
   }

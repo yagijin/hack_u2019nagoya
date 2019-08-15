@@ -9,7 +9,8 @@ export class Mainscreen extends Component {
         super(props);
         this.state = {
           checkedAndroid: false,
-          checkedGoogleHome: false
+          checkedGoogleHome: false,
+          text: "Target MAC Address"
         };
         (async ()=>{
           let token = await registerForPushNotificationsAsync()
@@ -64,13 +65,13 @@ export class Mainscreen extends Component {
             </ListItem>
             <ListItem>
               <Form>
-                  <Input placeholder="Target MAC Address" />
+                  <Input onChangeText={(text) => this.setState({text})} value={this.state.text}/>
               </Form>
             </ListItem>
           </Content>
           <Footer>
             <FooterTab>
-              <Button full onPress={_ => setMacAddr("MYMACADDRESS",this.token,(this.state.checkedAndroid && this.state.checkedGoogleHome)?"both":(this.state.checkedAndroid)?"android":"ghome")}>
+              <Button full onPress={_ => setMacAddr(this.state.text,this.token,(this.state.checkedAndroid && this.state.checkedGoogleHome)?"both":(this.state.checkedAndroid)?"android":"ghome")}>
                 <Text>Set Target to Notify</Text>
               </Button>
             </FooterTab>

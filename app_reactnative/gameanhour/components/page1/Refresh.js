@@ -13,7 +13,7 @@ export class RefreshList extends Component {
   }
   
   async setMacAddr(item) {
-    //MACアドレスの一覧をサーバに要求
+    //監視するMACアドレスを設定
     let texttoast = "";
     try {
       let resp = await fetch('http://192.168.11.36:8080/monitor',{
@@ -27,8 +27,6 @@ export class RefreshList extends Component {
             "notifyType": "android",
           })
       })
-      //MACアドレスの一覧を受信
-      let responseJson = await resp;//.json();
       texttoast = "You Set " + item;
     } catch(e) {
         console.log(e)
@@ -45,9 +43,9 @@ export class RefreshList extends Component {
       });
   }
   _renderItem = ({item}) => (
-    <ListItem style={{ marginLeft: 0 }} full onPress={_ => this.setMacAddr(item)}>
+    <ListItem style={{ marginLeft: 0 }} full onPress={_ => this.setMacAddr(item.macadd)}>
     <Body>
-        <Text>{item}</Text>
+        <Text>{item.macadd} {"   "} {item.vendor}</Text>
     </Body>
   </ListItem>
   )
@@ -58,7 +56,7 @@ export class RefreshList extends Component {
         <FlatList
           data={this.props.macAddrs}
           renderItem={this._renderItem}
-          keyExtractor={item => item}
+          keyExtractor={item => item.macadd}
           stickyHeaderIndices={this.state.stickyHeaderIndices}
         />
       );

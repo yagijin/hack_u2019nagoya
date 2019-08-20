@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { FlatList ,ToastAndroid } from "react-native";
 import { Text, ListItem, Left, Body, Icon, Right, Title ,Button } from "native-base";
 
-export async function setMacAddr(item, token, type) {
+export async function setMacAddr(item, token, type, ipaddr, googlehomeip) {
     console.log(item);
     console.log(token);
     console.log(type);
     //MACアドレスの一覧をサーバに要求
     try {
-      let resp = await fetch('http://192.168.11.36:8080/monitor',{
+      let resp = await fetch('http://'+ ipaddr +':8080/monitor',{
           method:"POST",
           headers: {
             'Content-Type': 'application/json',
@@ -16,7 +16,8 @@ export async function setMacAddr(item, token, type) {
           body: JSON.stringify({
             "macAddr": item,
             "token": token,
-            "notifyType": type
+            "notifyType": type,
+            "googlehomeip": googlehomeip
           })
       })
       //MACアドレスの一覧を受信

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, ToastAndroid } from "react-native";
-import { Text, ListItem, Left, Body, Icon, Right, Title, Button, Spinner, CheckBox, Content} from "native-base";
+import { Text, ListItem, Left, Body, Icon, Right, Title, Button, Spinner, CheckBox, Content, Form, Input} from "native-base";
 import { registerForPushNotificationsAsync } from './GetTokenNotify.js';
 
 export class RefreshList extends Component {
@@ -18,7 +18,7 @@ export class RefreshList extends Component {
     //監視するMACアドレスを設定
     let texttoast = "";
     try {
-      let resp = await fetch('http://192.168.11.36:8080/monitor',{
+      let resp = await fetch('http://' + this.props.iptext + ':8080/monitor',{
           method:"POST",
           headers: {
             'Content-Type': 'application/json',
@@ -26,7 +26,8 @@ export class RefreshList extends Component {
           body: JSON.stringify({
             "macAddr": item,
             "token": this.token,
-            "notifyType": (this.state.checkedAndroid && this.state.checkedGoogleHome)?"both":(this.state.checkedAndroid)?"android":"ghome"
+            "notifyType": (this.state.checkedAndroid && this.state.checkedGoogleHome)?"both":(this.state.checkedAndroid)?"android":"ghome",
+            "googlehomeip":this.props.googlehomeip
           })
       })
       texttoast = "You Set " + item;
@@ -60,7 +61,7 @@ export class RefreshList extends Component {
   _renderItem = ({item}) => (
     <ListItem style={{ marginLeft: 0 }} full onPress={_ => this.setMacAddr(item.macadd)}>
     <Body>
-        <Text>{item.macadd} {"   "} {item.vendor}</Text>
+        <Text>{item.macadd} {"\n"} {item.vendor}</Text>
     </Body>
   </ListItem>
   )
@@ -96,7 +97,7 @@ export class RefreshList extends Component {
         <FlatList
           data={this.props.macAddrs}
           renderItem={this._renderItem}
-          keyExtractor={item => item.macadd}
+          keyExtractor={(item,index) => index.toString()}
           stickyHeaderIndices={this.state.stickyHeaderIndices}
         />
         </Content>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem,Spinner } from 'native-base';
+import { View, Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text, List, ListItem,Spinner,Form,Input } from 'native-base';
 import { AppLoading } from 'expo';
 import { RefreshList } from './Refresh.js';
 
@@ -9,7 +9,9 @@ export class GetMACAddr extends Component {
         this.state = {
             isReady: false,
             str: [],
-            lastUpdate:Date()
+            lastUpdate:Date(),
+            iptext: 'Server  IP  Address',
+            googlehomeip: 'GoogleHome IP Address'
         };
     }
 
@@ -23,11 +25,11 @@ export class GetMACAddr extends Component {
       isReady : false
     })
 
-    let resp = await fetch('http://192.168.11.36:8080/get_mac_list',{
+    let resp = await fetch('http://' + this.state.iptext + ':8080/get_mac_list',{
         method:"GET"
     })
     let respJSON = await resp.json()
-
+    console.log("1");
     //MACアドレスの一覧を受信
     this.setState({
       str:respJSON.macAddrs,
@@ -41,14 +43,19 @@ export class GetMACAddr extends Component {
         <Container>
           <Header>
             <Body>
-              <Title>MACアドレスの選択</Title>
+              <Title>MACアドレスを選択する場合</Title>
             </Body>
           </Header>
           <Content>
-            <Text>
-              Push Refresh Button and Select Any MAC Address You Wanna Follow.
-            </Text>
-            <RefreshList macAddrs={this.state.str} isReady={this.state.isReady} />
+            <ListItem>
+              <Form>
+                  <Input onChangeText={(iptext) => this.setState({iptext})} value={this.state.iptext}/>
+              </Form>
+              <Form>
+                  <Input onChangeText={(googlehomeip) => this.setState({googlehomeip})} value={this.state.googlehomeip}/>
+              </Form>
+            </ListItem>
+            <RefreshList macAddrs={this.state.str} isReady={this.state.isReady} iptext={this.state.iptext} googlehomeip={this.state.googlehomeip}/>
           </Content>
           <Footer>
             <FooterTab>

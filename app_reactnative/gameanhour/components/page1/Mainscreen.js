@@ -9,7 +9,10 @@ export class Mainscreen extends Component {
         super(props);
         this.state = {
           checkedAndroid: false,
-          checkedGoogleHome: false
+          checkedGoogleHome: false,
+          text: "Target MAC Address",
+          iptext: "Server IP Address",
+          googlehomeip: "GoogleHome IP Address"
         };
         (async ()=>{
           let token = await registerForPushNotificationsAsync()
@@ -34,16 +37,17 @@ export class Mainscreen extends Component {
         <Container>
           <Header>
             <Body>
-              <Title>Limited An Hour Per A Day</Title>
+              <Title>MACアドレスを手動入力する場合</Title>
             </Body>
           </Header>
           <Content>
             <ListItem>
-              <Body>
-                <Text>
-                  Type Target MAC Address below. If You Don`t Know Target`s MAC Address, You Can Search It Using The Other Tab.  
-                </Text>
-              </Body>
+              <Form>
+                  <Input onChangeText={(iptext) => this.setState({iptext})} value={this.state.iptext}/>
+              </Form>
+              <Form>
+                  <Input onChangeText={(googlehomeip) => this.setState({googlehomeip})} value={this.state.googlehomeip}/>
+              </Form>
             </ListItem>
             <ListItem>
               <Body>
@@ -63,14 +67,21 @@ export class Mainscreen extends Component {
               </Body>
             </ListItem>
             <ListItem>
+              <Body>
+                <Text>
+                  Type Target MAC Address below. If You Don`t Know Target`s MAC Address, You Can Search It Using The Other Tab.  
+                </Text>
+              </Body>
+            </ListItem>
+            <ListItem>
               <Form>
-                  <Input placeholder="Target MAC Address" />
+                  <Input onChangeText={(text) => this.setState({text})} value={this.state.text}/>
               </Form>
             </ListItem>
           </Content>
           <Footer>
             <FooterTab>
-              <Button full onPress={_ => setMacAddr("MYMACADDRESS",this.token,(this.state.checkedAndroid && this.state.checkedGoogleHome)?"both":(this.state.checkedAndroid)?"android":"ghome")}>
+              <Button full onPress={_ => setMacAddr(this.state.text,this.token,(this.state.checkedAndroid && this.state.checkedGoogleHome)?"both":(this.state.checkedAndroid)?"android":"ghome",this.state.iptext,this.state.googlehomeip)}>
                 <Text>Set Target to Notify</Text>
               </Button>
             </FooterTab>

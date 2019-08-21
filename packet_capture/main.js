@@ -16,6 +16,7 @@ let targetMacAddr = MACADDR.mac();
 let deviceToken = 'Default'
 let startFlag = false
 let notifyType = 'Default'
+let googlehomeip = 'Default'
 
 // Packet Caputure
 let pcapSession = pcap.createSession(NET_INTERFACE, "arp")
@@ -74,7 +75,7 @@ app.get('/get_mac_list',function(req,res){
 // 監視の開始
 app.post('/monitor', function(req,res){
   console.log(req.body)
-  if(req.body.token === undefined || req.body.macAddr === undefined || req.body.notifyType === undefined ) {
+  if(req.body.token === undefined || req.body.macAddr === undefined || req.body.notifyType === undefined || req.body.googlehomeip === undefined) {
     res.json({
       'message':'Format error'
     })
@@ -85,6 +86,7 @@ app.post('/monitor', function(req,res){
   let token = req.body.token
   let macAddr = util.hex2dex(req.body.macAddr)
   let type = req.body.notifyType
+  let googlehomeipaddr = req.body.googlehomeip
 
   console.log('Target MAC address is Changed!')
   console.log(targetMacAddr," -> ",macAddr)
@@ -92,11 +94,14 @@ app.post('/monitor', function(req,res){
   console.log(deviceToken,' -> ',token)
   console.log('Notify Type is Changed!')
   console.log(notifyType,' -> ',type)
+  console.log('Google Home IP is Changed!')
+  console.log(googlehomeipaddr,' -> ',googlehomeip)
   console.log()
 
   deviceToken = token
   targetMacAddr = macAddr
   notifyType = type
+  googlehomeip = googlehomeipaddr
 
   startFlag = true
 

@@ -30,3 +30,19 @@ MACアドレスがターゲットのものと一致したら設定した各種�
 ユーザに通知．  
 ターゲットの切り替え．  
 各種設定  
+
+### アプリの使い方
+#### MACアドレスを手動入力する場合
+サーバとGoogleHomeのIPアドレスを指定します．  
+その後，ターゲットの帰宅を通知したいデバイスを選択．  
+ターゲットのMACアドレスを入力して `SET TARGET TO NOTIFY` ボタンを押して設定完了．  
+#### MACアドレスを選択する場合
+サーバとGoogleHomeのIPアドレスを指定します．  
+ターゲットの帰宅を通知したいデバイスを選択．  
+その後`REFRESH`ボタンを押すとローカルネットワーク上のMACアドレス一覧が表示されます．ベンダーの情報もわかるためここからターゲットのMACアドレスの部分を押すとて設定完了．  
+<table>
+<tr>
+<td><img src="https://user-images.githubusercontent.com/29916489/63913619-b7794400-ca6b-11e9-9a7e-f04b858333b9.png"></td>
+<td><img src="https://user-images.githubusercontent.com/29916489/63913617-b7794400-ca6b-11e9-90ea-b276d2c6439d.png"></td>
+</tr>
+</table>

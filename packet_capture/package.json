@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "expo-server-sdk": "^3.3.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "pcap": "^2.1.0"
   }
 }
